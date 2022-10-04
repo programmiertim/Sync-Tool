@@ -11,36 +11,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Service
+//@Service
 public class WatchFolderService {
 
+    int i = 0;
+    public WatchFolderService(){
+        System.out.println("Watcher angelegt!");
+    }
 
 
 
-    @Async("threadPoolTaskExecutor")
-    public void watch(SyncService syncService, QuellService quellService, ZielService zielService){
+    //@Async("threadPoolTaskExecutor")
+    public void watch(String pfad, SyncService syncService, QuellService quellService, ZielService zielService){
         try {
+            System.out.println("Watcher watched!");
             WatchService watchService
                     = FileSystems.getDefault().newWatchService();
 
-            List<Path> pathList = new ArrayList<>();
-            for(String pfad : quellService.getArrayListQuellString()){
-                pathList.add(Paths.get(pfad));
-            }
+            Path path = Paths.get(pfad);
 
-            for(Path path : pathList){
-                path.register(
+            path.register(
                         watchService,
                         StandardWatchEventKinds.ENTRY_CREATE,
                         StandardWatchEventKinds.ENTRY_DELETE,
                         StandardWatchEventKinds.ENTRY_MODIFY);
-            }
 
 
 
-            WatchKey key;
+
+            WatchKey key = null;
+            key = watchService.take();
             while ((key = watchService.take()) != null) {
                 for (WatchEvent<?> event : key.pollEvents()) {
+                    i++;
+                    System.out.println(i);
                     try {
                         for(File destination : zielService.getArrayListZiel()){
                             for (File source : quellService.getArrayListQuell()){
@@ -58,8 +62,10 @@ public class WatchFolderService {
                 key.reset();
             }
         } catch (IOException e) {
+            System.out.println(e.fillInStackTrace());
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
+            System.out.println(e.fillInStackTrace());
             throw new RuntimeException(e);
         }
     }

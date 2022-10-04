@@ -11,6 +11,7 @@ import tools.albert.synctool.services.SyncService;
 import tools.albert.synctool.services.WatchFolderService;
 import tools.albert.synctool.services.ZielService;
 
+import java.beans.Transient;
 import java.io.File;
 import java.io.IOException;
 
@@ -26,8 +27,8 @@ public class RestController {
     @Autowired
     SyncService syncService;
 
-    @Autowired
-    WatchFolderService watchFolderService;
+//    @Autowired
+//    transient WatchFolderService watchFolderService;
 
 
 
@@ -54,7 +55,8 @@ public class RestController {
         modelAndView.addObject("quellen", quellService.getArrayListQuellString());
         modelAndView.addObject("ziele", zielService.getArrayListZielString());
         modelAndView.addObject("lastFile", syncService.getLastFile());
-        watchFolderService.watch(syncService, quellService, zielService);
+        WatchFolderService watchFolderService = new WatchFolderService();
+        watchFolderService.watch(pfad, syncService, quellService, zielService);
 
 
         return modelAndView;
