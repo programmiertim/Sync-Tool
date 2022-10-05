@@ -10,41 +10,57 @@ import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static tools.albert.synctool.controller.RestController.*;
 
-//@Service
+
+@Service
 public class WatchFolderService {
 
     int i = 0;
+    String pfad = "";
+
+    WatchService watchService = null;
     public WatchFolderService(){
         System.out.println("Watcher angelegt!");
+        try {
+            watchService = FileSystems.getDefault().newWatchService();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Async("threadPoolTaskExecutor")
+    public void setPfad(String pfad) {
+        register(pfad);
+    }
+
+
+    private void register(String pfad) {
+        try {
+            Path path = Paths.get(pfad);
+
+            path.register(
+                    watchService,
+                    StandardWatchEventKinds.ENTRY_CREATE,
+                    StandardWatchEventKinds.ENTRY_DELETE,
+                    StandardWatchEventKinds.ENTRY_MODIFY);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        watch();
     }
 
 
 
-    //@Async("threadPoolTaskExecutor")
-    public void watch(String pfad, SyncService syncService, QuellService quellService, ZielService zielService){
+    private void watch() {
         try {
             System.out.println("Watcher watched!");
-            WatchService watchService
-                    = FileSystems.getDefault().newWatchService();
-
-            Path path = Paths.get(pfad);
-
-            path.register(
-                        watchService,
-                        StandardWatchEventKinds.ENTRY_CREATE,
-                        StandardWatchEventKinds.ENTRY_DELETE,
-                        StandardWatchEventKinds.ENTRY_MODIFY);
-
-
-
 
             WatchKey key = null;
-            key = watchService.take();
             while ((key = watchService.take()) != null) {
                 for (WatchEvent<?> event : key.pollEvents()) {
-                    i++;
-                    System.out.println(i);
+
                     try {
                         for(File destination : zielService.getArrayListZiel()){
                             for (File source : quellService.getArrayListQuell()){
@@ -61,12 +77,8 @@ public class WatchFolderService {
                 }
                 key.reset();
             }
-        } catch (IOException e) {
-            System.out.println(e.fillInStackTrace());
-            throw new RuntimeException(e);
         } catch (InterruptedException e) {
             System.out.println(e.fillInStackTrace());
-            throw new RuntimeException(e);
         }
     }
 }

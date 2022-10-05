@@ -18,17 +18,15 @@ import java.io.IOException;
 @Controller
 public class RestController {
 
-    @Autowired
-    QuellService quellService;
+    public static QuellService quellService = new QuellService();
+
+    public static ZielService zielService = new ZielService();
+
+    public static SyncService syncService = new SyncService();
 
     @Autowired
-    ZielService zielService;
+    WatchFolderService watchFolderService;
 
-    @Autowired
-    SyncService syncService;
-
-//    @Autowired
-//    transient WatchFolderService watchFolderService;
 
 
 
@@ -42,6 +40,7 @@ public class RestController {
         ModelAndView modelAndView = new ModelAndView("index");
 
         quellService.addQuelle(pfad);
+        watchFolderService.setPfad(pfad);
         try {
             for(File destination : zielService.getArrayListZiel()){
                 for (File source : quellService.getArrayListQuell()){
@@ -55,8 +54,6 @@ public class RestController {
         modelAndView.addObject("quellen", quellService.getArrayListQuellString());
         modelAndView.addObject("ziele", zielService.getArrayListZielString());
         modelAndView.addObject("lastFile", syncService.getLastFile());
-        WatchFolderService watchFolderService = new WatchFolderService();
-        watchFolderService.watch(pfad, syncService, quellService, zielService);
 
 
         return modelAndView;
