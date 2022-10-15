@@ -1,17 +1,16 @@
 package tools.albert.synctool.services;
 
 import lombok.Getter;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import tools.albert.synctool.util.NoSyncFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Getter
@@ -19,15 +18,20 @@ public class SyncService {
 
     private ArrayList<String> lastFile = new ArrayList<>();
 
+    private HashMap<String, NoSyncFile> mapAlreadySync = new HashMap<>();
+
     private static final int FAT_PRECISION = 2000;
     public static final long DEFAULT_COPY_BUFFER_SIZE = 16 * 1024 * 1024; // 16 MB
 
 
-    public void sync(File source, File destination, boolean smart) throws IOException {
-        synchronize(source, destination, smart, DEFAULT_COPY_BUFFER_SIZE);
+    @Async("threadPoolTaskExecutor")
+    public boolean sync(File source, NoSyncFile destination, boolean smart) throws IOException {
+        return synchronize(source, destination, smart, DEFAULT_COPY_BUFFER_SIZE);
     }
 
-    public void synchronize(File source, File destination, boolean smart, long chunkSize) throws IOException {
+    @Async("threadPoolTaskExecutor")
+    public boolean synchronize(File source, NoSyncFile destination, boolean smart, long chunkSize) throws IOException {
+        boolean newSync = false;
         if (chunkSize <= 0) {
             System.out.println("Chunk size must be positive: using default value.");
             chunkSize = DEFAULT_COPY_BUFFER_SIZE;
@@ -56,24 +60,22 @@ public class SyncService {
             //copy each file from source
             for (String fileName : sources) {
                 File srcFile = new File(source, fileName);
-                File destFile = new File(destination, fileName);
+                NoSyncFile destFile = new NoSyncFile(destination, fileName);
                 synchronize(srcFile, destFile, smart, chunkSize);
             }
         } else {
             if (destination.exists() && destination.isDirectory()) {
                 //delete(destination);
             }
-            if (destination.exists()) {
-                long sts = source.lastModified() / FAT_PRECISION;
-                long dts = destination.lastModified() / FAT_PRECISION;
-                //do not copy if smart and same timestamp and same length
-                if (!smart || sts == 0 || sts != dts || source.length() != destination.length()) {
+
+                if (!mapAlreadySync.containsKey(source.getName())) {
                     copyFile(source, destination, chunkSize);
+                    mapAlreadySync.put(destination.getName(),destination);
+                    newSync = true;
                 }
-            } else {
-                copyFile(source, destination, chunkSize);
-            }
+
         }
+        return newSync;
     }
 
 

@@ -2,6 +2,7 @@ package tools.albert.synctool.services;
 
 import lombok.Getter;
 import org.springframework.stereotype.Service;
+import tools.albert.synctool.util.NoSyncFile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,11 +11,11 @@ import java.util.ArrayList;
 @Getter
 public class ZielService {
 
-    private ArrayList<File> arrayListZiel = new ArrayList<>();
+    private ArrayList<NoSyncFile> arrayListZiel = new ArrayList<>();
     private ArrayList<String> arrayListZielString = new ArrayList<>();
 
     public void addZiel(String pfad){
-        File dir = new File(pfad);
+        NoSyncFile dir = new NoSyncFile(pfad);
         arrayListZiel.add(dir);
         arrayListZielString.add(pfad);
     }
