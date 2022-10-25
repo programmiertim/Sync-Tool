@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import tools.albert.synctool.util.NoSyncFile;
@@ -20,7 +19,7 @@ import static tools.albert.synctool.controller.RestController.*;
 public class SpringAsyncConfig {
 
     @Value("${syncTimeOut}")
-    private String syncTimeOut;
+    public static String syncTimeOut;
 
     @Bean(name = "threadPoolTaskExecutor")
     public Executor asyncExecutor() {
@@ -35,12 +34,17 @@ public class SpringAsyncConfig {
 
     }
 
+     public static void setSyncTimer(String timer){
+         syncTimeOut = timer;
+     }
+
     @Async
     public void autoSync(){
         boolean newSync = false;
 
         while (true) {
             try {
+                logger.info("Starte Sync-Lauf!");
                 for(NoSyncFile destination : zielService.getArrayListZiel()){
                     for (File source : quellService.getArrayListQuell()){
                         newSync = syncService.sync(source, destination, true);
@@ -50,13 +54,14 @@ public class SpringAsyncConfig {
                     if (syncService!=null) {
                         Thread.sleep(Long.parseLong(syncTimeOut));
                     } else {
-                        Thread.sleep(60000l);
+                        Thread.sleep(60000L);
                     }
                 } catch (InterruptedException ignored) {
                 }
                 if(newSync){
 
                 }
+                logger.info("Beende Sync-Lauf!");
             } catch (IOException e) {
 
             }

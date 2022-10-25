@@ -68,8 +68,10 @@ public class RestController {
 
     @PostMapping(value = {"/indexQuellpfad", "index.html"})
     public ModelAndView postQuellpfad(@RequestParam(name = "Quellpfad")String pfad){
-        quellService.addQuelle(pfad);
-        logger.info(pfad + " wurde als Quelle hinzugefügt");
+        if (pfad.compareTo("")!=0) {
+            quellService.addQuelle(pfad);
+            logger.info(pfad + " wurde als Quelle hinzugefügt");
+        }
         return index();
     }
 
@@ -83,11 +85,30 @@ public class RestController {
 
     @PostMapping(value = {"/indexZielpfad", "index.html"})
     public ModelAndView postZielpfad(@RequestParam(name = "Zielpfad")String pfad){
-        zielService.addZiel(pfad);
-        logger.info(pfad + " wurde als Ziel hinzugefügt");
-        springAsyncConfig.autoSync();
-        logger.info("Autosync wurde gestartet");
-        syncActiv = true;
+        if (pfad.compareTo("")!=0) {
+            zielService.addZiel(pfad);
+            logger.info(pfad + " wurde als Ziel hinzugefügt");
+            springAsyncConfig.autoSync();
+            logger.info("Autosync wurde gestartet");
+            syncActiv = true;
+        }
         return index();
     }
+
+    @PostMapping(value = {"/util/synctime", "index.html"})
+    public ModelAndView postZielpfad(@RequestParam(name = "synctimer")Integer pfad){
+        if (!pfad.equals(0)) {
+            SpringAsyncConfig.setSyncTimer(String.valueOf(pfad));
+        }
+        return index();
+    }
+
+    @PostMapping(value = {"/actuator/shutdown", "index.html"})
+    public void exit(){
+        System.exit(0);
+    }
+
+
+
+
 }

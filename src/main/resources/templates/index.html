@@ -28,12 +28,22 @@
     <br>
     <br>
     <br>
-    <form action="/" method="post">
-        <input type="submit" value="Manuell syncronisieren">
-    </form>
-    <br>
+
     <form action="/" method="post">
         <input type="submit" value="Reload">
+    </form>
+    <br>
+    <br>
+    <form action="/actuator/shutdown" method="post">
+        <input type="submit" value="Service beenden">
+    </form>
+    <br>
+    <br>
+    <br>
+    <form action="/util/synctime" method="post">
+        <label for="synctimer">Sync-Timer ändern auf: </label>
+        <input type="number" id="synctimer" name="synctimer">
+        <input type="submit" value="Sync-Timer ändern">
     </form>
     <br>
     <br>
