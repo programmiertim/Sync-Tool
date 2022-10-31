@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.*;
 
+import static tools.albert.synctool.controller.RestController.*;
+
 @Service
 @Getter
 public class SyncService {
@@ -70,6 +72,7 @@ public class SyncService {
 
                 if (!mapAlreadySync.containsKey(source.getName())) {
                     copyFile(source, destination, chunkSize);
+                    logger.info("File kopiert!");
                     mapAlreadySync.put(destination.getName(),destination);
                     newSync = true;
                 }

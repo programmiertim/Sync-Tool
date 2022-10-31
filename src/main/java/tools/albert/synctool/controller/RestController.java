@@ -46,15 +46,11 @@ public class RestController {
         ModelAndView modelAndView = new ModelAndView("index");
 
         if (!syncActiv) {
-            try {
-                for(NoSyncFile destination : zielService.getArrayListZiel()){
-                    for (File source : quellService.getArrayListQuell()){
-                        syncService.sync(source, destination, true);
-                    }
-                }
-            } catch (IOException e) {
-                modelAndView.addObject("fehler", "Es lief etwas schief!");
-            }
+
+                HtmlRun test = new HtmlRun();
+                Thread thread = new Thread(test);
+                thread.start();
+
         }
         modelAndView.addObject("quellen", quellService.getArrayListQuellString());
         logger.info("Quellen wurden in die View geladen");
@@ -64,6 +60,24 @@ public class RestController {
         logger.info("Liste der letzten Dateien wurde in die View geladen");
 
         return modelAndView;
+    }
+
+    private class HtmlRun implements Runnable  {
+
+        @Override
+        public void run() {
+            if (!syncActiv) {
+                try {
+                    for(NoSyncFile destination : zielService.getArrayListZiel()){
+                        for (File source : quellService.getArrayListQuell()){
+                            syncService.sync(source, destination, true);
+                        }
+                    }
+                } catch (IOException e) {
+                    //modelAndView.addObject("fehler", "Es lief etwas schief!");
+                }
+            }
+        }
     }
 
     @PostMapping(value = {"/indexQuellpfad", "index.html"})
