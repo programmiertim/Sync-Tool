@@ -19,4 +19,10 @@ public class ZielService {
         arrayListZiel.add(dir);
         arrayListZielString.add(pfad);
     }
+
+    public void deleteQuelle(String pfad) {
+        NoSyncFile dir = new NoSyncFile(pfad);
+        arrayListZiel.remove(dir);
+        arrayListZielString.remove(pfad);
+    }
 }

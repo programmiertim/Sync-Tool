@@ -58,6 +58,7 @@ public class RestController {
         logger.info("Ziele wurden in die View geladen");
         modelAndView.addObject("lastFile", syncService.getLastFile());
         logger.info("Liste der letzten Dateien wurde in die View geladen");
+        modelAndView.setViewName("index.html");
 
         return modelAndView;
     }
@@ -81,7 +82,7 @@ public class RestController {
     }
 
     @PostMapping(value = {"/indexQuellpfad", "index.html"})
-    public ModelAndView postQuellpfad(@RequestParam(name = "Quellpfad")String pfad){
+    public ModelAndView postQuellpfad(@RequestParam(name = "quellpfad")String pfad){
         if (pfad.compareTo("")!=0) {
             quellService.addQuelle(pfad);
             logger.info(pfad + " wurde als Quelle hinzugefügt");
@@ -98,7 +99,7 @@ public class RestController {
 
 
     @PostMapping(value = {"/indexZielpfad", "index.html"})
-    public ModelAndView postZielpfad(@RequestParam(name = "Zielpfad")String pfad){
+    public ModelAndView postZielpfad(@RequestParam(name = "zielpfad")String pfad){
         if (pfad.compareTo("")!=0) {
             zielService.addZiel(pfad);
             logger.info(pfad + " wurde als Ziel hinzugefügt");
@@ -112,7 +113,7 @@ public class RestController {
     @PostMapping(value = {"/util/synctime", "index.html"})
     public ModelAndView postZielpfad(@RequestParam(name = "synctimer")Integer pfad){
         if (!pfad.equals(0)) {
-            SpringAsyncConfig.setSyncTimer(String.valueOf(pfad));
+            springAsyncConfig.setSyncTimer(String.valueOf(pfad));
         }
         return index();
     }
@@ -122,7 +123,20 @@ public class RestController {
         System.exit(0);
     }
 
+    @PostMapping(value = {"/quelle/delete", "index.html"})
+    public ModelAndView deleteQuelle(@RequestParam(name = "quelle")String pfad){
+        quellService.deleteQuelle(pfad);
 
 
+        return index();
+    }
+
+    @PostMapping(value = {"/ziel/delete", "index.html"})
+    public ModelAndView deleteZiel(@RequestParam(name = "ziel")String pfad){
+        zielService.deleteQuelle(pfad);
+
+
+        return index();
+    }
 
 }

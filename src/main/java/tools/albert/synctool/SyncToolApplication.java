@@ -13,8 +13,4 @@ public class SyncToolApplication {
 		SpringApplication.run(SyncToolApplication.class, args);
 	}
 
-	//https://medium.com/javarevisited/spring-boot-application-as-a-windows-service-4c775556518e
-	//Install as Microsoftservice
-
-
 }

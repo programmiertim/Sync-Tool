@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import tools.albert.synctool.util.NoSyncFile;
 
 import java.io.File;
@@ -19,7 +20,7 @@ import static tools.albert.synctool.controller.RestController.*;
 public class SpringAsyncConfig {
 
     @Value("${syncTimeOut}")
-    public static String syncTimeOut;
+    public String syncTimeOut;
 
     @Bean(name = "threadPoolTaskExecutor")
     public Executor asyncExecutor() {
@@ -34,7 +35,7 @@ public class SpringAsyncConfig {
 
     }
 
-     public static void setSyncTimer(String timer){
+     public void setSyncTimer(String timer){
          syncTimeOut = timer;
      }
 

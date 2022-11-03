@@ -18,4 +18,10 @@ public class QuellService {
         arrayListQuell.add(dir);
         arrayListQuellString.add(pfad);
     }
+
+    public  void deleteQuelle(String pfad){
+        File dir = new File(pfad);
+        arrayListQuell.remove(dir);
+        arrayListQuellString.remove(pfad);
+    }
 }

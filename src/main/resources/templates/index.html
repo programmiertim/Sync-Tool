@@ -1,84 +1,111 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.w3.org/1999/xhtml">
 
-    <head>
-        <meta charset="utf-8">
-        <title>Sync-Tool</title>
-        <link rel="stylesheet" type="text/css" href="/static/css/styles.css">
-    </head>
-    <body>
+<head>
+    <meta charset="utf-8">
+    <title>Sync-Tool</title>
+    <link rel="stylesheet" href="/static/styles.css" th:href="@{/styles.css}" type="text/css">
+</head>
+<body>
 
-    <h1>Sync-Tool</h1>
+<h1>Sync-Tool</h1>
 
-    <form action="/indexQuellpfad" method="post">
-        <p>
-            <label id="quellLabel">Quellpfad hinzufügen</label>
-        </p>
-        <input type="text" id="quellpfad" name="Quellpfad">
-        <input type="submit" value="Hinzufügen">
-    </form>
+<form action="/indexQuellpfad" method="post">
+    <p>
+        <label id="quellLabel">Quellpfad hinzufügen</label>
+    </p>
+    <input type="text" id="quellpfad" name="quellpfad" placeholder="Hier den Pfad einfügen">
+    <input type="submit" value="Hinzufügen">
+</form>
 
-    <form action="/indexZielpfad" method="post">
-        <p>
-            <label id="zielLabel">Zielpfad hinzufügen</label>
-        </p>
-        <input type="text" id="zielpfad" name="Zielpfad">
-        <input type="submit" value="Hinzufügen">
-    </form>
-    <br>
-    <br>
-    <br>
+<form action="/indexZielpfad" method="post">
+    <p>
+        <label id="zielLabel">Zielpfad hinzufügen</label>
+    </p>
+    <input type="text" id="zielpfad" name="zielpfad" placeholder="Hier den Pfad einfügen">
+    <input type="submit" value="Hinzufügen">
+</form>
 
-    <form action="/" method="post">
-        <input type="submit" value="Reload">
-    </form>
-    <br>
-    <br>
-    <form action="/actuator/shutdown" method="post">
-        <input type="submit" value="Service beenden">
-    </form>
-    <br>
-    <br>
-    <br>
-    <form action="/util/synctime" method="post">
+
+<form action="/util/synctime" method="post">
+    <p>
         <label for="synctimer">Sync-Timer ändern auf: </label>
-        <input type="number" id="synctimer" name="synctimer">
-        <input type="submit" value="Sync-Timer ändern">
-    </form>
-    <br>
-    <br>
-    <br>
+    </p>
+    <input type="number" id="synctimer" name="synctimer">
+    <input type="submit" value="Sync-Timer ändern">
+</form>
+<br>
+<br>
+<form action="/" method="post">
+    <input type="submit" value="Reload">
+</form>
 
-    <div>
+<form action="/actuator/shutdown" method="post">
+    <input type="submit" value="Service beenden">
+</form>
+
+<section id="section-löschen">
+    <h2>Quellen entfernen</h2>
+    <form action="/quelle/delete" method="post">
+        <p>
+            <label>Quellverzeichnis entfernen</label>
+        </p>
+        <select name="quelle">
+            <option th:each="item : ${quellen}"
+                    th:text="${item}"
+                    th:value="${item}">
+            </option>
+        </select>
+        <button type="submit">Löschen</button>
+
+    </form>
+
+    <h2>Ziele entfernen</h2>
+    <form action="/ziel/delete" method="post">
+        <p>
+            <label>Zielverzeichnis entfernen</label>
+        </p>
+        <select name="ziel">
+            <option th:each="item : ${ziele}"
+                    th:text="${item}"
+                    th:value="${item}">
+            </option>
+        </select>
+        <button type="submit">Löschen</button>
+
+    </form>
+</section>
+
+<br>
+
+<section id="section-verzeichnisse">
+    <div class="liste">
         <label>Alle Quellverzeichnisse:</label>
         <ul th:each="item : ${quellen}">
             <li th:text="${item}"></li>
         </ul>
     </div>
-
-    <br>
-    <br>
-
-    <div>
+    <div class="liste">
         <label>Alle Zielverzeichnisse:</label>
         <ul th:each="item : ${ziele}">
             <li th:text="${item}"></li>
         </ul>
     </div>
-
-    <br>
-    <br>
-
-    <div>
+    <div class="liste">
         <label>Kopierte Files:</label>
         <ul th:each="item : ${lastFile}">
             <li th:text="${item}"></li>
         </ul>
     </div>
+</section>
 
 
-    <label th:text="${fehler}"></label>
 
-    </body>
+<br>
+
+
+<label th:text="${fehler}"></label>
+
+</body>
 
 </html>
