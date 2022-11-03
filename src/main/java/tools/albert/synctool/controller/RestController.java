@@ -31,7 +31,7 @@ public class RestController {
 
     public static SyncService syncService = new SyncService();
 
-    private boolean syncActiv = false;
+    public static boolean syncActiv = false;
 
 
     @Autowired
@@ -58,7 +58,6 @@ public class RestController {
         logger.info("Ziele wurden in die View geladen");
         modelAndView.addObject("lastFile", syncService.getLastFile());
         logger.info("Liste der letzten Dateien wurde in die View geladen");
-        modelAndView.setViewName("index.html");
 
         return modelAndView;
     }

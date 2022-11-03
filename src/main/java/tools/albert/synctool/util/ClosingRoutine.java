@@ -41,5 +41,16 @@ public class ClosingRoutine {
         }
         writer.close();
         logger.info("Dateienliste wurde gespeichert");
+
+        writer = new FileWriter("autostart.txt");
+
+        if(syncActiv){
+            writer.write("true");
+        } else {
+            writer.write("false");
+        }
+
+        writer.close();
+        logger.info("Dateienliste wurde gespeichert");
     }
 }

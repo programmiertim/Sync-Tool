@@ -67,5 +67,19 @@ public class StartRoutine {
         } catch (IOException e) {
 
         }
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("autostart.txt"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if(line.compareTo("true")==0){
+                    syncActiv = true;
+                }
+            }
+            reader.close();
+            logger.info("autosync wurde geladen");
+        } catch (IOException e) {
+
+        }
     }
 }
